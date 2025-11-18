@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+</head>
+<body>
+{% extends 'base.html' %}
+{% block title %}Início - Blog{% endblock %}
+{% block content %}
+    {% for post in posts %}
+    <div class="post">
+        <h2>{{ post.titulo }}</h2>
+        <img src="{{ url_for('static', filename=post.imagem) }}" alt="Imagem do post">
+        <p>{{ post.conteudo }}</p>
+
+	{% if session.get('logado') %}
+        <a href="{{ url_for('edit', post_id=post.id) }}">Editar</a>
+
+        <form action="{{ url_for('delete', post_id=post.id) }}" method="POST" style="display:inline;">
+            <button type="submit" onclick="return confirm('Confirma exclusão do post?')">Excluir</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+{% endblock %}
+</body>
+</html>
+
