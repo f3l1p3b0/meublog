@@ -8,21 +8,23 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app=Flask(__name__)
 UPLOAD_FOLDER='static/images'
 ALLOWED_EXTENSIONS={'png','jpg','jpeg','gif'}
-app.config['UPLOAD_FOLDER']=UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  
 app.secret_key="^TTvrXXjxkMx@-2~VpJBhjWR@5Vt>jX'^kNY"
 USUARIO="admin"
 SENHA_HASH=generate_password_hash("profiterolis")
-print("senha",SENHA_HASH)
+BASE_DIR=os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER=os.path.join(BASE_DIR,'static','images')
+POSTS_FILE=os.path.join(BASE_DIR,'posts.json')
+app.config['UPLOAD_FOLDER']=UPLOAD_FOLDER
 
 def carregar_posts():
-    if os.path.exists("posts.json"):
-        with open("posts.json","r",encoding="utf-8")as f:
+    if os.path.exists(POSTS_FILE):
+        with open(POSTS_FILE,"r",encoding="utf-8")as f:
             return json.load(f)
     return []
 
 def salvar_posts(posts):
-    with open("posts.json","w",encoding="utf-8")as f:
+    with open(POSTS_FILE,"w",encoding="utf-8")as f:
         json.dump(posts,f,indent=4,ensure_ascii=False)
 
 def allowed_file(filename):
@@ -134,5 +136,5 @@ def sobre():
     return render_template('sobre.html')
 
 if __name__ =='__main__':
-    app.run(ssl_context=('localhost.pem','localhost-key.pem'),debug=True)
-    app.run(host='0.0.0.0',port=5000)
+    port=int(os.environ.get('PORT',5000))
+    app.run(host='0.0.0.0',port=port)
